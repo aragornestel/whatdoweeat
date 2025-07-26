@@ -1,4 +1,5 @@
 node_modules/
+whatdoweeat.db
 
 # API Keys
 config.js 

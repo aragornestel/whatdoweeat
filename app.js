@@ -367,32 +367,49 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
 
-                function createVoteLink() {
+                async function createVoteLink() {
                     if (voteList.length === 0) {
                         alert('공유할 맛집을 먼저 선택해주세요.');
                         return;
                     }
-
+                
                     const placesToShare = voteList.map(place => ({
                         id: place.id,
                         place_name: place.place_name,
                         address_name: place.address_name,
                         road_address_name: place.road_address_name,
-                        place_url: place.place_url 
+                        place_url: place.place_url
                     }));
-
-                    const data = JSON.stringify(placesToShare);
-                    const encodedData = btoa(encodeURIComponent(data));
-                    
-                    const url = `${window.location.origin}/vote.html?data=${encodedData}`;
-
-                    navigator.clipboard.writeText(url).then(() => {
-                        alert('투표 링크가 클립보드에 복사되었습니다!');
-                    }).catch(err => {
-                        console.error('클립보드 복사 실패: ', err);
-                        alert('클립보드 복사에 실패했습니다. 수동으로 복사해주세요.');
-                        prompt('아래 링크를 복사하여 친구들에게 공유하세요!', url); 
-                    });
+                
+                    try {
+                        const response = await fetch('/api/polls', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ candidates: placesToShare }),
+                        });
+                
+                        if (!response.ok) {
+                            throw new Error('Failed to create a poll.');
+                        }
+                
+                        const result = await response.json();
+                        const pollId = result.pollId;
+                        const url = `${window.location.origin}/vote.html?pollId=${pollId}`;
+                
+                        navigator.clipboard.writeText(url).then(() => {
+                            alert('투표 링크가 클립보드에 복사되었습니다!');
+                        }).catch(err => {
+                            console.error('클립보드 복사 실패: ', err);
+                            alert('클립보드 복사에 실패했습니다. 수동으로 복사해주세요.');
+                            prompt('아래 링크를 복사하여 친구들에게 공유하세요!', url);
+                        });
+                
+                    } catch (error) {
+                        console.error('Error creating poll link:', error);
+                        alert('투표 링크 생성 중 오류가 발생했습니다.');
+                    }
                 }
             });
         };

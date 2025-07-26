@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const userSelections = new Set();
     let candidatesData = [];
     let voterTooltip;
-    let storageKey = ''; // localStorage 키
-    let voteState = {};  // 투표 상태를 저장할 객체
+    let pollId = ''; 
+    let voteState = {};
 
     // 페이지 로드 시 툴팁 엘리먼트를 한 번만 생성
     function createVoterTooltip() {
@@ -23,21 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         voterTooltip.className = 'voter-tooltip';
         voterTooltip.style.display = 'none';
         document.body.appendChild(voterTooltip);
-    }
-
-    function getCandidatesFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const data = urlParams.get('data');
-        if (data) {
-            try {
-                const decodedData = decodeURIComponent(atob(data));
-                return JSON.parse(decodedData);
-            } catch (e) {
-                console.error('URL 데이터 파싱 오류:', e);
-                return [];
-            }
-        }
-        return [];
     }
 
     function displayCandidates(candidates) {
@@ -111,15 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
         window.open(placeUrl, 'place_details_popup', popupFeatures);
     }
 
-    function createSeededRandom(seed) {
-        let state = seed;
-        return function() {
-            // Simple LCG PRNG
-            state = (state * 9301 + 49297) % 233280;
-            return state / 233280.0;
-        };
-    }
-
     function applyTextPrimaryStyle() {
         const elements = document.querySelectorAll('.btn-text-primary');
         elements.forEach(el => {
@@ -134,54 +110,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function initializeVoteApp() {
+    async function initializeVoteApp() {
         const urlParams = new URLSearchParams(window.location.search);
-        const data = urlParams.get('data');
-        storageKey = data ? 'voteState_' + data : '';
+        pollId = urlParams.get('pollId');
         
-        candidatesData = getCandidatesFromURL();
-        if (candidatesData.length === 0) {
-            // 후보 정보가 없으면 닉네임 입력란 숨기고 메시지 표시
-            nicknameSection.style.display = 'none';
-            votePageSection.style.display = 'block';
-            candidateListContainer.innerHTML = '<p>공유된 맛집 정보가 없거나 잘못된 링크입니다.</p>';
-            document.querySelector('#vote-guide-text').style.display = 'none';
-            document.querySelector('.vote-actions').style.display = 'none';
+        if (!pollId) {
+            showError('잘못된 접근입니다. 투표 링크를 다시 확인해주세요.');
+            return;
         }
 
-        createVoterTooltip();
-        applyTextPrimaryStyle();
-        voteTitle.style.marginBottom = '24px';
+        try {
+            const response = await fetch(`/api/polls/${pollId}`);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: '투표 정보를 불러오는데 실패했습니다.' }));
+                throw new Error(errorData.error || 'Failed to fetch poll data');
+            }
+            const data = await response.json();
+            candidatesData = data.candidates;
+            voteState = { voters: data.votes || {} };
+
+            createVoterTooltip();
+            applyTextPrimaryStyle();
+            voteTitle.style.marginBottom = '24px';
+            
+        } catch (error) {
+            console.error('Initialization error:', error);
+            showError(error.message);
+        }
+    }
+
+    function showError(message) {
+        nicknameSection.style.display = 'none';
+        votePageSection.style.display = 'block';
+        candidateListContainer.innerHTML = `<p>${message}</p>`;
+        document.getElementById('vote-guide-text').style.display = 'none';
+        document.querySelector('.vote-actions').style.display = 'none';
     }
 
     function renderResults(state) {
         votePageSection.classList.add('results-mode');
         voteTitle.textContent = '투표 결과';
         resultDescription.innerHTML = `
-            <li>다른 분들도 투표 중일 거에요. 나중에 결과를 확인해 보세요.</li>
-            <li>투표가 마무리 되기 전에 다시 선택지를 바꿀 수도 있어요.</li>
+            <li>투표가 완료되었습니다. 다른 친구들의 결과도 확인해보세요.</li>
+            <li>결과가 마음에 들지 않으면, '다시 투표하기'로 선택을 바꿀 수 있습니다.</li>
         `;
         voteTitle.style.textAlign = 'left';
 
-        // 1. 최종 투표자 목록 집계
         const finalVoteData = {};
         candidatesData.forEach(c => {
             finalVoteData[c.id] = { voters: [] };
         });
 
-        // 실제 사용자 투표
         for (const name in state.voters) {
             state.voters[name].forEach(placeId => {
-                if (finalVoteData[placeId]) finalVoteData[placeId].voters.push(name);
+                if (finalVoteData[placeId]) {
+                    finalVoteData[placeId].voters.push(name);
+                }
             });
         }
-        // 시뮬레이션된 투표
-        for (const name in state.simulatedVoters) {
-            const placeId = state.simulatedVoters[name];
-            if (finalVoteData[placeId]) finalVoteData[placeId].voters.push(name);
-        }
-
-        // 2. 득표수 계산 및 UI 업데이트
+        
         let maxVotes = 0;
         candidatesData.forEach(c => {
             const result = finalVoteData[c.id];
@@ -189,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.totalVotes > maxVotes) maxVotes = result.totalVotes;
         });
 
-        displayCandidates(candidatesData); // 결과 표시를 위해 목록을 다시 그림
+        displayCandidates(candidatesData);
 
         candidatesData.forEach(c => {
             const result = finalVoteData[c.id];
@@ -213,19 +200,10 @@ document.addEventListener('DOMContentLoaded', function() {
         submitVoteBtn.style.display = 'none';
         showResultButtons();
     }
-
+    
     function resetVote() {
         votePageSection.classList.remove('results-mode');
-        
-        // localStorage에서 현재 사용자 투표 기록만 제거
-        if (voteState.voters[userNickname]) {
-            delete voteState.voters[userNickname];
-            localStorage.setItem(storageKey, JSON.stringify(voteState));
-        }
-
-        userSelections.clear(); // 현재 세션의 선택 기록 초기화
-
-        // 투표 화면으로 UI 리셋
+        userSelections.clear();
         voteTitle.textContent = '가고 싶은 곳에 투표';
         resultDescription.innerHTML = '';
         voteTitle.style.textAlign = 'left';
@@ -237,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.removeAttribute('data-voters');
         });
 
-        displayCandidates(candidatesData); // 투표 목록 다시 표시
+        displayCandidates(candidatesData);
         
         voteActions.innerHTML = '';
         voteActions.appendChild(submitVoteBtn);
@@ -273,52 +251,47 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const storedState = localStorage.getItem(storageKey);
-        voteState = storedState ? JSON.parse(storedState) : { voters: {}, simulatedVoters: {} };
-
         userNickname = nickname;
         nicknameSection.style.display = 'none';
         votePageSection.style.display = 'block';
 
-        if (voteState.voters[nickname]) {
-            // 이미 투표한 경우, 바로 결과 표시
+        if (voteState.voters && voteState.voters[nickname]) {
             renderResults(voteState);
         } else {
-            // 처음 투표하는 경우, 투표 화면 표시
             displayCandidates(candidatesData);
         }
     });
 
-    submitVoteBtn.addEventListener('click', function() {
-        // 투표 완료 시, 현재 상태를 다시 읽어옴
-        const currentState = localStorage.getItem(storageKey) 
-            ? JSON.parse(localStorage.getItem(storageKey))
-            : { voters: {}, simulatedVoters: {} };
-
-        // 최초 투표 시에만 가상 투표자 생성
-        if (Object.keys(currentState.simulatedVoters).length === 0) {
-            // storageKey를 기반으로 시드 생성하여 결과 고정
-            const seed = storageKey.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            const seededRandom = createSeededRandom(seed);
-            
-            const fakeVoters = ['김민준', '이서연', '박도윤', '최지우', '정시우', '강하은', '조민서', '윤지아', '임도현', '송예나'];
-            fakeVoters.forEach(voter => {
-                if (candidatesData.length > 0) {
-                    const randomIndex = Math.floor(seededRandom() * candidatesData.length);
-                    const votedCandidateId = candidatesData[randomIndex].id;
-                    currentState.simulatedVoters[voter] = votedCandidateId;
-                }
+    submitVoteBtn.addEventListener('click', async function() {
+        try {
+            const selections = Array.from(userSelections);
+            const response = await fetch('/api/votes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    pollId: pollId,
+                    userName: userNickname,
+                    selections: selections 
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error('투표 결과를 저장하는 데 실패했습니다.');
+            }
+
+            // 서버 저장이 성공하면, 현재 상태를 로컬에서 업데이트하고 결과를 바로 표시
+            if (!voteState.voters) {
+                voteState.voters = {};
+            }
+            voteState.voters[userNickname] = selections;
+            renderResults(voteState);
+
+        } catch (error) {
+            console.error('Error submitting vote:', error);
+            alert(error.message);
         }
-        
-        // 현재 사용자 투표 정보 추가 또는 갱신
-        currentState.voters[userNickname] = Array.from(userSelections);
-
-        // localStorage에 최종 상태 저장
-        localStorage.setItem(storageKey, JSON.stringify(currentState));
-
-        // 결과 렌더링
-        renderResults(currentState);
     });
 
     candidateListContainer.addEventListener('change', function(e) {
