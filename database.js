@@ -1,5 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./whatdoweeat.db', (err) => {
+const path = require('path');
+
+// Render의 영구 디스크 경로 또는 로컬 경로를 사용
+const dbPath = process.env.RENDER_DISK_PATH ? path.join(process.env.RENDER_DISK_PATH, 'whatdoweeat.db') : './whatdoweeat.db';
+
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error opening database', err.message);
     }

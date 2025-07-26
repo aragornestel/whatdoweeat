@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const { db, initializeDb } = require('./database.js');
 
 // 데이터베이스가 완전히 초기화된 후에 서버를 시작

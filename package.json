@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -10,7 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0",
+    "express": "^4.19.2",
     "sqlite3": "^5.1.7"
+  },
+  "engines": {
+    "node": ">=23.0.0"
   }
 }
