@@ -1,5 +1,13 @@
-node_modules/
-whatdoweeat.db
+# Firebase
+.firebase/
+firebase.json
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+
+functions/node_modules
 
 # API Keys
-config.js 
+config.js
+.env.*
+whatdoweeat.db 
