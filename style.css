@@ -46,13 +46,15 @@ main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    padding: 15px; /* main 영역 전체에 여백 */
-    gap: 15px; /* 자식 요소들 사이의 간격 */
+    padding: 15px;
+    gap: 15px;
     box-sizing: border-box;
+    overflow: hidden; /* Prevent scrolling in main area */
 }
 
 .map-area {
-    flex-grow: 1; /* 남은 공간을 모두 차지 */
+    /* flex-grow: 1; */ /* 이 속성을 제거하여 고정된 비율을 갖도록 합니다. */
+    aspect-ratio: 1 / 1; /* 가로:세로 비율을 1:1로 설정합니다. */
     position: relative;
     background-color: #f0f2f5;
     border-radius: 8px;
@@ -63,6 +65,26 @@ main {
     width: 100%;
     height: 100%;
 }
+
+.loading-indicator {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f2f5;
+    color: #888;
+    font-size: 1.1em;
+}
+
+/* 지도가 초기화되면 이 클래스가 제거됩니다. */
+#map.loading .loading-indicator {
+    display: flex;
+}
+#map:not(.loading) .loading-indicator {
+    display: none;
+}
+
 
 .search-container {
     display: flex;
@@ -93,8 +115,127 @@ main {
     font-weight: bold;
 }
 
-.content-area {
-    flex-grow: 1;
-    overflow-y: auto; /* 내용이 많아지면 스크롤 */
+/* --- Result Sheet (Bottom Sheet) --- */
+.result-sheet {
+    position: fixed; /* 전체 화면을 기준으로 위치 고정 */
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%); /* 가로 중앙 정렬 및 숨김 */
+    width: 100%;
+    max-width: var(--app-width);
+    height: 65vh; /* 높이를 화면의 65%로 고정 */
+    background-color: #fff;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000; /* 지도 위에 표시되도록 z-index 추가 */
+}
+
+.result-sheet.visible {
+    transform: translateX(-50%) translateY(0); /* 가로 중앙 정렬 및 보임 */
+}
+
+/* --- Dynamic Search Bar --- */
+main.search-active .search-container {
+    display: none;
+}
+
+.result-header {
     padding: 15px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-subtitle {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #666;
+    margin: 4px 0 0 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #888;
+}
+
+.result-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 8px 15px; /* 카드 좌우, 상하 여백 */
+}
+
+.result-item {
+    padding: 12px 15px; /* 세로 여백 줄임 */
+    /* border-bottom: 1px solid #eee; */ /* 구분선 제거 */
+    border: 1px solid #e9e9e9;
+    border-radius: 8px; /* 둥근 모서리 */
+    margin-bottom: 10px; /* 카드 간격 줄임 */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-item:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.result-item h5 {
+    margin: 0 0 4px 0;
+    font-size: 16px; /* 폰트 크기 16px로 지정 */
+}
+
+.result-item p {
+    margin: 0;
+    font-size: 14px; /* 폰트 크기 14px로 지정 */
+    color: #666;
+}
+
+.result-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.result-item.disabled:hover {
+    transform: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    background-color: #fff;
+}
+
+/* --- Floating Button --- */
+.floating-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    background-color: #2db400;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.floating-btn.visible {
+    opacity: 1;
+    visibility: visible;
 } 

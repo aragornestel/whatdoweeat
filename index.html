@@ -18,13 +18,26 @@
             </div>
             <div class="map-area">
                 <div id="map">
-                    <!-- 지도가 이 곳에 표시됩니다. -->
+                    <div class="loading-indicator">
+                        <p>지도 로딩 중...</p>
+                    </div>
                 </div>
             </div>
-            <div class="content-area">
-                <!-- 검색 결과가 여기에 표시됩니다. -->
-            </div>
         </main>
+
+        <div id="result-sheet" class="result-sheet">
+            <div class="result-header">
+                <div>
+                    <span id="result-count">검색 결과</span>
+                    <p class="result-subtitle">함께 먹고 싶은 곳들을 골라 주세요.</p>
+                </div>
+                <button id="close-sheet-btn" class="close-btn">&times;</button>
+            </div>
+            <div id="result-list" class="result-list">
+                <!-- 검색 결과 목록이 여기에 표시됩니다. -->
+            </div>
+        </div>
+        <button id="reopen-sheet-btn" class="floating-btn">결과 다시 보기</button>
     </div>
     <script src="app.js"></script>
 </body>
