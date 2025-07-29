@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>오늘 뭐 먹지? - v2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="gnb">
+            <h1>오늘 뭐 먹지</h1>
+        </header>
+        <main>
+            <div class="search-container">
+                <input type="text" id="keyword" placeholder="지역, 상호명, 음식 검색">
+                <button id="search-btn">검색</button>
+            </div>
+            <div class="map-area">
+                <div id="map">
+                    <!-- 지도가 이 곳에 표시됩니다. -->
+                </div>
+            </div>
+            <div class="content-area">
+                <!-- 검색 결과가 여기에 표시됩니다. -->
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 
