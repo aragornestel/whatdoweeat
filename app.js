@@ -2,6 +2,7 @@
 let map;
 let markers = [];
 let currentPlaces = []; // 현재 검색 결과를 저장할 배열
+let infowindow = null; // 정보창을 저장할 변수
 
 document.addEventListener('DOMContentLoaded', function () {
     const KAKAO_JS_KEY = '083df200276ca2cba88ee3db6ebbc2c1';
@@ -98,9 +99,13 @@ async function searchPlaces() {
     const ne = bounds.getNorthEast(); // 북동쪽 좌표
     const rect = `${sw.getLng()},${sw.getLat()},${ne.getLng()},${ne.getLat()}`;
 
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const apiBaseUrl = isLocal
+        ? 'http://127.0.0.1:5001/whatdoweeat-vibe/us-central1/api'
+        : 'https://api-762xdud6eq-uc.a.run.app';
+
     try {
-        // 불안정한 Rewrite 대신, Function의 직접 URL을 호출하는 안정적인 방식을 사용합니다.
-        const response = await fetch(`https://api-762xdud6eq-uc.a.run.app/search?query=${keyword}&rect=${rect}`);
+        const response = await fetch(`${apiBaseUrl}/search?query=${keyword}&rect=${rect}`);
         if (!response.ok) {
             throw new Error('API 호출에 실패했습니다.');
         }
@@ -132,6 +137,10 @@ function displayPlaces(places) {
     const resultList = document.getElementById('result-list');
     resultList.innerHTML = '';
     removeMarkers();
+    
+    if (infowindow) {
+        infowindow.close();
+    }
 
     if (places.length === 0) {
         resultList.innerHTML = '<div class="no-result">검색 결과가 없습니다.</div>';
@@ -140,25 +149,55 @@ function displayPlaces(places) {
 
     const bounds = new kakao.maps.LatLngBounds();
 
-    places.forEach(place => {
-        const item = document.createElement('div');
-        item.className = 'result-item';
-        item.innerHTML = `
+    places.forEach((place, index) => {
+        const placePosition = new kakao.maps.LatLng(place.y, place.x);
+
+        const marker = new kakao.maps.Marker({
+            position: placePosition,
+            map: map,
+            title: place.place_name
+        });
+
+        markers.push(marker);
+
+        infowindow = new kakao.maps.InfoWindow({
+            content: `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`,
+            disableAutoPan: true
+        });
+
+        const listItem = document.createElement('div');
+        listItem.className = 'result-item';
+        listItem.innerHTML = `
             <h5>${place.place_name}</h5>
             <p>${place.road_address_name || place.address_name}</p>
         `;
+        resultList.appendChild(listItem);
 
-        const position = new kakao.maps.LatLng(place.y, place.x);
-        
-        item.addEventListener('click', () => {
-            map.setCenter(position);
+        // 마커와 리스트 아이템에 호버 이벤트 추가
+        kakao.maps.event.addListener(marker, 'mouseover', () => {
+            infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
+            infowindow.open(map, marker);
+        });
+
+        kakao.maps.event.addListener(marker, 'mouseout', () => {
+            infowindow.close();
+        });
+
+        listItem.addEventListener('mouseover', () => {
+            infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
+            infowindow.open(map, marker);
+        });
+
+        listItem.addEventListener('mouseout', () => {
+            infowindow.close();
+        });
+
+        listItem.addEventListener('click', () => {
+            map.setCenter(placePosition);
             map.setLevel(3);
         });
-        
-        addMarker(position, place.place_name);
-        bounds.extend(position);
-        
-        resultList.appendChild(item);
+
+        bounds.extend(placePosition);
     });
 
     if (places.length > 0) {
@@ -166,14 +205,7 @@ function displayPlaces(places) {
     }
 }
 
-function addMarker(position, title) {
-    const marker = new kakao.maps.Marker({
-        position: position,
-        map: map,
-        title: title,
-    });
-    markers.push(marker);
-}
+
 
 function removeMarkers() {
     markers.forEach(marker => marker.setMap(null));
