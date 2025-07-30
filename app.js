@@ -79,6 +79,23 @@ function initializeMap(centerPosition) {
         reopenBtn.classList.remove('visible');
         mainElement.classList.add('search-active');
     });
+
+    // 모달 관련 요소 및 이벤트 리스너 설정
+    const modal = document.getElementById('place-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    const closeModal = () => {
+        modal.classList.remove('visible');
+        const iframe = document.getElementById('place-iframe');
+        iframe.src = 'about:blank'; // iframe 내용 비우기
+    };
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
 }
 
 async function searchPlaces() {
@@ -188,7 +205,13 @@ function displayPlaces(places) {
         listItem.addEventListener('mouseout', hideInfoWindow);
 
         listItem.addEventListener('click', () => {
-            window.open(place.place_url, '_blank');
+            const modal = document.getElementById('place-modal');
+            const modalPlaceName = document.getElementById('modal-place-name');
+            const iframe = document.getElementById('place-iframe');
+
+            modalPlaceName.textContent = place.place_name;
+            iframe.src = place.place_url;
+            modal.classList.add('visible');
         });
 
         bounds.extend(placePosition);
