@@ -49,6 +49,13 @@ function initializeMap(centerPosition) {
     // 검색 버튼 이벤트 리스너 설정
     document.getElementById('search-btn').addEventListener('click', searchPlaces);
 
+    // 검색창에서 엔터 키 입력 시 검색 실행
+    document.getElementById('keyword').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            searchPlaces();
+        }
+    });
+
     // 바텀시트 닫기/열기 버튼 이벤트 리스너 설정
     const resultSheet = document.getElementById('result-sheet');
     const closeBtn = document.getElementById('close-sheet-btn');
