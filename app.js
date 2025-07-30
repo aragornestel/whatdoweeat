@@ -204,7 +204,7 @@ function displayPlaces(places) {
         listItem.addEventListener('mouseover', showInfoWindow);
         listItem.addEventListener('mouseout', hideInfoWindow);
 
-        listItem.addEventListener('click', () => {
+        const openModal = () => {
             const modal = document.getElementById('place-modal');
             const modalPlaceName = document.getElementById('modal-place-name');
             const iframe = document.getElementById('place-iframe');
@@ -212,7 +212,10 @@ function displayPlaces(places) {
             modalPlaceName.textContent = place.place_name;
             iframe.src = place.place_url.replace('http://', 'https://');
             modal.classList.add('visible');
-        });
+        };
+
+        kakao.maps.event.addListener(marker, 'click', openModal);
+        listItem.addEventListener('click', openModal);
 
         bounds.extend(placePosition);
     });

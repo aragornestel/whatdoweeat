@@ -123,7 +123,7 @@ main {
     transform: translateX(-50%) translateY(100%); /* 가로 중앙 정렬 및 숨김 */
     width: 100%;
     max-width: var(--app-width);
-    height: 65vh; /* 높이를 화면의 65%로 고정 */
+    height: 50vh; /* 높이를 화면의 50%로 고정 */
     background-color: #fff;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
