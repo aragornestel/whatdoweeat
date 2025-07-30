@@ -2,7 +2,7 @@
 let map;
 let markers = [];
 let currentPlaces = []; // 현재 검색 결과를 저장할 배열
-let infowindow = null; // 정보창을 저장할 변수
+let infowindow; // 정보창을 저장할 변수
 
 document.addEventListener('DOMContentLoaded', function () {
     const KAKAO_JS_KEY = '083df200276ca2cba88ee3db6ebbc2c1';
@@ -46,6 +46,11 @@ function initializeMap(centerPosition) {
         level: 3 // 카카오맵의 확대 레벨
     };
     map = new kakao.maps.Map(mapContainer, mapOptions);
+
+    infowindow = new kakao.maps.InfoWindow({
+        disableAutoPan: true,
+        zIndex: 1
+    });
 
     // 검색 버튼 이벤트 리스너 설정
     document.getElementById('search-btn').addEventListener('click', searchPlaces);
@@ -138,7 +143,7 @@ function displayPlaces(places) {
     resultList.innerHTML = '';
     removeMarkers();
     
-    if (infowindow) {
+    if (infowindow.getMap()) {
         infowindow.close();
     }
 
@@ -160,11 +165,6 @@ function displayPlaces(places) {
 
         markers.push(marker);
 
-        infowindow = new kakao.maps.InfoWindow({
-            content: `<div style="padding:5px;font-size:12px;">${place.place_name}</div>`,
-            disableAutoPan: true
-        });
-
         const listItem = document.createElement('div');
         listItem.className = 'result-item';
         listItem.innerHTML = `
@@ -173,28 +173,24 @@ function displayPlaces(places) {
         `;
         resultList.appendChild(listItem);
 
-        // 마커와 리스트 아이템에 호버 이벤트 추가
-        kakao.maps.event.addListener(marker, 'mouseover', () => {
+        const showInfoWindow = () => {
             infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
             infowindow.open(map, marker);
-        });
+        };
 
-        kakao.maps.event.addListener(marker, 'mouseout', () => {
+        const hideInfoWindow = () => {
             infowindow.close();
-        });
+        };
 
-        listItem.addEventListener('mouseover', () => {
-            infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
-            infowindow.open(map, marker);
-        });
-
-        listItem.addEventListener('mouseout', () => {
-            infowindow.close();
-        });
+        kakao.maps.event.addListener(marker, 'mouseover', showInfoWindow);
+        kakao.maps.event.addListener(marker, 'mouseout', hideInfoWindow);
+        listItem.addEventListener('mouseover', showInfoWindow);
+        listItem.addEventListener('mouseout', hideInfoWindow);
 
         listItem.addEventListener('click', () => {
             map.setCenter(placePosition);
             map.setLevel(3);
+            showInfoWindow();
         });
 
         bounds.extend(placePosition);
