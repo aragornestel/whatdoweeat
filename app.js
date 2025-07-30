@@ -210,7 +210,7 @@ function displayPlaces(places) {
             const iframe = document.getElementById('place-iframe');
 
             modalPlaceName.textContent = place.place_name;
-            iframe.src = place.place_url;
+            iframe.src = place.place_url.replace('http://', 'https://');
             modal.classList.add('visible');
         });
 
