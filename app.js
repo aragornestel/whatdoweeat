@@ -188,9 +188,7 @@ function displayPlaces(places) {
         listItem.addEventListener('mouseout', hideInfoWindow);
 
         listItem.addEventListener('click', () => {
-            map.setCenter(placePosition);
-            map.setLevel(3);
-            showInfoWindow();
+            window.open(place.place_url, '_blank');
         });
 
         bounds.extend(placePosition);
