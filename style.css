@@ -280,7 +280,7 @@ main.search-active .search-container {
 .modal-container {
     display: none; /* 기본적으로 숨김 */
     position: fixed;
-    z-index: 1500;
+    z-index: 2000; /* 투표 후보 리스트보다 높은 z-index */
     left: 0;
     top: 0;
     width: 100%;
@@ -295,20 +295,18 @@ main.search-active .search-container {
     display: flex; /* 보일 때 flex로 설정 */
 }
 
-/* 투표 관련 모달 스타일 */
-.ballot-candidates-container,
-.vote-poll-container {
+/* 투표 후보 리스트 스크롤 영역 */
+.ballot-candidates-container {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.ballot-candidates-container h3,
-.vote-poll-container h3 {
+.ballot-candidates-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
     margin-bottom: 20px;
-    color: #333;
-    font-weight: normal; /* bold 제거 */
-    line-height: 1.5;
-    white-space: pre-line; /* 줄바꿈 허용 */
-    font-size: 14px; /* 설명 텍스트와 동일한 크기 */
 }
 
 .ballot-candidates-description {
@@ -318,6 +316,7 @@ main.search-active .search-container {
     margin-bottom: 20px;
     padding: 0 10px;
     white-space: pre-line; /* 줄바꿈 허용 */
+    flex-shrink: 0; /* 크기 고정 */
 }
 
 #creator-name,
@@ -474,11 +473,11 @@ main.search-active .search-container {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.creator-input-section,
-.voter-input-section {
-    margin-top: 30px;
+.creator-input-section {
+    margin-top: 0;
     padding-top: 20px;
     border-top: 1px solid #eee;
+    flex-shrink: 0; /* 크기 고정 */
 }
 
 /* 토스 스타일 모달 개선 */
