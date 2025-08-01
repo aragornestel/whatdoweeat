@@ -301,7 +301,7 @@ main.search-active .search-container {
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     width: 90%;
-    max-width: 800px; /* 데스크탑 최대 너비 */
+    max-width: var(--app-width); /* 앱의 최대 너비에 맞춤 */
     height: 80vh; /* 화면 높이의 80% */
     display: flex;
     flex-direction: column;
@@ -422,18 +422,19 @@ main.search-active .search-container {
 }
 
 .remove-candidate-btn {
-    background-color: #dc3545;
-    color: white;
+    background: none;
+    color: #dc3545;
     border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
+    padding: 8px;
+    border-radius: 50%;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 18px;
     margin-left: 10px;
+    transition: background-color 0.2s ease;
 }
 
 .remove-candidate-btn:hover {
-    background-color: #c82333;
+    background-color: #f8d7da;
 }
 
 .vote-poll-item {

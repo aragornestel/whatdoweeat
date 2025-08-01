@@ -372,7 +372,7 @@ function openBallotCandidatesModal() {
                 <h5>${place.place_name}</h5>
                 <p>${place.road_address_name || place.address_name}</p>
             </div>
-            <button class="remove-candidate-btn">제외</button>
+            <button class="remove-candidate-btn">×</button>
         `;
         ballotCandidatesList.appendChild(candidateItem);
         
