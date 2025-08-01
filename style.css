@@ -328,6 +328,9 @@ main.search-active .search-container {
     flex-shrink: 0; /* 크기 고정 */
     background-color: #fff; /* 배경색 추가로 확실히 보이게 */
     padding-bottom: 20px; /* 하단 여백 추가 */
+    display: flex; /* 한 줄 배치를 위해 flex 추가 */
+    align-items: center; /* 세로 중앙 정렬 */
+    gap: 10px; /* 요소 간 간격 */
 }
 
 .creator-input-section h3 {
@@ -341,12 +344,12 @@ main.search-active .search-container {
 
 #creator-name,
 #voter-name {
-    width: calc(100% - 20px); /* ballot-candidate-item과 동일한 패딩 */
+    flex: 1; /* 남은 공간 차지 */
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
-    margin-bottom: 15px; /* 여백 줄임 */
+    margin-bottom: 0; /* 하단 여백 제거 */
     box-sizing: border-box; /* 패딩과 보더를 포함한 너비 계산 */
 }
 
@@ -360,8 +363,8 @@ main.search-active .search-container {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    margin-left: auto; /* 우측 정렬 */
-    display: block; /* 블록 요소로 변경 */
+    flex-shrink: 0; /* 크기 고정 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 #share-vote-btn:hover,
