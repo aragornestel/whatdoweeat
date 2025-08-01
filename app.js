@@ -390,6 +390,15 @@ function openBallotCandidatesModal() {
         });
     });
     
+    // 생성자 이름 입력 섹션의 타이틀 변경
+    const creatorInputSection = document.querySelector('.creator-input-section');
+    if (creatorInputSection) {
+        const titleElement = creatorInputSection.querySelector('h3');
+        if (titleElement) {
+            titleElement.textContent = '솔선수범하여 맛집을 찾고 있는 매력적인 당신의 이름을 입력해 주세요.';
+        }
+    }
+    
     ballotCandidatesModal.classList.add('visible');
 }
 

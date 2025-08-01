@@ -359,12 +359,13 @@ main.search-active .search-container {
 
 #creator-name,
 #voter-name {
-    width: 100%;
+    width: calc(100% - 40px); /* 좌우 패딩을 고려한 너비 */
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
     margin-bottom: 20px;
+    box-sizing: border-box; /* 패딩과 보더를 포함한 너비 계산 */
 }
 
 #share-vote-btn,
@@ -423,7 +424,7 @@ main.search-active .search-container {
 
 .remove-candidate-btn {
     background: none;
-    color: #dc3545;
+    color: #28a745; /* 초록색으로 변경 */
     border: none;
     padding: 8px;
     border-radius: 50%;
@@ -434,7 +435,7 @@ main.search-active .search-container {
 }
 
 .remove-candidate-btn:hover {
-    background-color: #f8d7da;
+    background-color: #d4edda; /* 연한 초록색 배경 */
 }
 
 .vote-poll-item {
