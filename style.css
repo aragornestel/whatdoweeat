@@ -41,6 +41,19 @@ body, html {
     font-size: 1.2em;
 }
 
+#ballot-box-btn {
+    display: none; /* 기본적으로 숨김 */
+    margin-left: auto; /* h1 왼쪽에 두고, 버튼은 오른쪽으로 */
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
 /* Main Content Area */
 main {
     flex-grow: 1;
@@ -176,6 +189,9 @@ main.search-active .search-container {
 }
 
 .result-item {
+    display: flex; /* Flexbox 레이아웃 사용 */
+    justify-content: space-between; /* 양쪽 끝으로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
     padding: 12px 15px; /* 세로 여백 줄임 */
     /* border-bottom: 1px solid #eee; */ /* 구분선 제거 */
     border: 1px solid #e9e9e9;
@@ -184,6 +200,26 @@ main.search-active .search-container {
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-item-info {
+    flex-grow: 1; /* 정보 영역이 남은 공간을 모두 차지하도록 */
+}
+
+.add-to-ballot-btn {
+    flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
+    margin-left: 10px; /* 왼쪽 여백 */
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.add-to-ballot-btn.added {
+    background-color: #6c757d;
 }
 
 .result-item:hover {

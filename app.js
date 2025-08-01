@@ -2,6 +2,7 @@
 let map;
 let markers = [];
 let currentPlaces = []; // 현재 검색 결과를 저장할 배열
+let ballotBox = []; // 투표함에 담긴 장소를 저장할 배열
 let infowindow; // 정보창을 저장할 변수
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -185,24 +186,42 @@ function displayPlaces(places) {
         const listItem = document.createElement('div');
         listItem.className = 'result-item';
         listItem.innerHTML = `
-            <h5>${place.place_name}</h5>
-            <p>${place.road_address_name || place.address_name}</p>
+            <div class="result-item-info">
+                <h5>${place.place_name}</h5>
+                <p>${place.road_address_name || place.address_name}</p>
+            </div>
+            <button class="add-to-ballot-btn">담기</button>
         `;
         resultList.appendChild(listItem);
 
+        const infoDiv = listItem.querySelector('.result-item-info');
+        const addToBallotBtn = listItem.querySelector('.add-to-ballot-btn');
+
+        // 이 장소가 이미 투표함에 있는지 확인하고 버튼 상태 업데이트
+        if (ballotBox.some(item => item.id === place.id)) {
+            addToBallotBtn.textContent = '빼기';
+            addToBallotBtn.classList.add('added');
+        }
+
+        // 투표함 버튼 클릭 이벤트
+        addToBallotBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 이벤트 버블링 중단
+            toggleBallotBoxItem(place, addToBallotBtn);
+        });
+        
         const showInfoWindow = () => {
             infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
             infowindow.open(map, marker);
         };
-
+        
         const hideInfoWindow = () => {
             infowindow.close();
         };
 
         kakao.maps.event.addListener(marker, 'mouseover', showInfoWindow);
         kakao.maps.event.addListener(marker, 'mouseout', hideInfoWindow);
-        listItem.addEventListener('mouseover', showInfoWindow);
-        listItem.addEventListener('mouseout', hideInfoWindow);
+        infoDiv.addEventListener('mouseover', showInfoWindow);
+        infoDiv.addEventListener('mouseout', hideInfoWindow);
 
         const openModal = () => {
             const modal = document.getElementById('place-modal');
@@ -215,7 +234,7 @@ function displayPlaces(places) {
         };
 
         kakao.maps.event.addListener(marker, 'click', openModal);
-        listItem.addEventListener('click', openModal);
+        infoDiv.addEventListener('click', openModal);
 
         bounds.extend(placePosition);
     });
@@ -230,4 +249,28 @@ function displayPlaces(places) {
 function removeMarkers() {
     markers.forEach(marker => marker.setMap(null));
     markers = [];
+}
+
+function toggleBallotBoxItem(place, button) {
+    const index = ballotBox.findIndex(item => item.id === place.id);
+    if (index > -1) {
+        ballotBox.splice(index, 1);
+        button.textContent = '담기';
+        button.classList.remove('added');
+    } else {
+        ballotBox.push(place);
+        button.textContent = '빼기';
+        button.classList.add('added');
+    }
+    updateBallotBoxButton();
+}
+
+function updateBallotBoxButton() {
+    const ballotBoxBtn = document.getElementById('ballot-box-btn');
+    if (ballotBox.length > 0) {
+        ballotBoxBtn.style.display = 'block';
+        ballotBoxBtn.textContent = `${ballotBox.length}개 장소 선택`;
+    } else {
+        ballotBoxBtn.style.display = 'none';
+    }
 } 
