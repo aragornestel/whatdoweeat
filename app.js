@@ -4,6 +4,8 @@ let markers = [];
 let currentPlaces = []; // 현재 검색 결과를 저장할 배열
 let ballotBox = []; // 투표함에 담긴 장소를 저장할 배열
 let infowindow; // 정보창을 저장할 변수
+let currentVoterName = ''; // 현재 투표자 이름
+let voteResults = []; // 투표 결과를 저장할 배열
 
 document.addEventListener('DOMContentLoaded', function () {
     const KAKAO_JS_KEY = '083df200276ca2cba88ee3db6ebbc2c1';
@@ -97,6 +99,9 @@ function initializeMap(centerPosition) {
             closeModal();
         }
     });
+
+    // 투표 관련 모달 이벤트 리스너 설정
+    setupVoteModals();
 }
 
 async function searchPlaces() {
@@ -273,4 +278,224 @@ function updateBallotBoxButton() {
     } else {
         ballotBoxBtn.style.display = 'none';
     }
+}
+
+function setupVoteModals() {
+    const ballotBoxBtn = document.getElementById('ballot-box-btn');
+    const nameInputModal = document.getElementById('name-input-modal');
+    const voteModal = document.getElementById('vote-modal');
+    const voteResultModal = document.getElementById('vote-result-modal');
+    
+    // 1단계: 이름 입력 모달 관련
+    const nameInputCloseBtn = document.getElementById('name-input-close-btn');
+    const voterNameInput = document.getElementById('voter-name');
+    const nameSubmitBtn = document.getElementById('name-submit-btn');
+    
+    // 2단계: 투표 모달 관련
+    const voteModalCloseBtn = document.getElementById('vote-modal-close-btn');
+    const voteSubmitBtn = document.getElementById('vote-submit-btn');
+    
+    // 3단계: 투표 결과 모달 관련
+    const voteResultCloseBtn = document.getElementById('vote-result-close-btn');
+    const voteResultClose = document.getElementById('vote-result-close');
+    
+    // GNB 버튼 클릭 시 1단계 모달 열기
+    ballotBoxBtn.addEventListener('click', () => {
+        nameInputModal.classList.add('visible');
+        voterNameInput.focus();
+    });
+    
+    // 이름 입력 모달 닫기
+    nameInputCloseBtn.addEventListener('click', () => {
+        nameInputModal.classList.remove('visible');
+        voterNameInput.value = '';
+    });
+    
+    // 이름 입력 모달 바깥 클릭 시 닫기
+    nameInputModal.addEventListener('click', (event) => {
+        if (event.target === nameInputModal) {
+            nameInputModal.classList.remove('visible');
+            voterNameInput.value = '';
+        }
+    });
+    
+    // 이름 제출 버튼 클릭 시 2단계로 이동
+    nameSubmitBtn.addEventListener('click', () => {
+        const voterName = voterNameInput.value.trim();
+        if (voterName) {
+            currentVoterName = voterName;
+            nameInputModal.classList.remove('visible');
+            voterNameInput.value = '';
+            openVoteModal();
+        } else {
+            alert('이름을 입력해주세요.');
+        }
+    });
+    
+    // 엔터 키로 이름 제출
+    voterNameInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            nameSubmitBtn.click();
+        }
+    });
+    
+    // 투표 모달 닫기
+    voteModalCloseBtn.addEventListener('click', () => {
+        voteModal.classList.remove('visible');
+    });
+    
+    // 투표 모달 바깥 클릭 시 닫기
+    voteModal.addEventListener('click', (event) => {
+        if (event.target === voteModal) {
+            voteModal.classList.remove('visible');
+        }
+    });
+    
+    // 투표 완료 버튼 클릭 시 3단계로 이동
+    voteSubmitBtn.addEventListener('click', () => {
+        submitVote();
+    });
+    
+    // 투표 결과 모달 닫기
+    voteResultCloseBtn.addEventListener('click', () => {
+        voteResultModal.classList.remove('visible');
+    });
+    
+    voteResultClose.addEventListener('click', () => {
+        voteResultModal.classList.remove('visible');
+    });
+    
+    // 투표 결과 모달 바깥 클릭 시 닫기
+    voteResultModal.addEventListener('click', (event) => {
+        if (event.target === voteResultModal) {
+            voteResultModal.classList.remove('visible');
+        }
+    });
+}
+
+function openVoteModal() {
+    const voteModal = document.getElementById('vote-modal');
+    const voteItemsList = document.getElementById('vote-items-list');
+    const voteModalTitle = document.getElementById('vote-modal-title');
+    
+    voteModalTitle.textContent = `${currentVoterName}님의 투표`;
+    voteItemsList.innerHTML = '';
+    
+    ballotBox.forEach((place, index) => {
+        const voteItem = document.createElement('div');
+        voteItem.className = 'vote-item';
+        voteItem.innerHTML = `
+            <div class="vote-item-info">
+                <h5>${place.place_name}</h5>
+                <p>${place.road_address_name || place.address_name}</p>
+            </div>
+            <div class="vote-buttons">
+                <button class="vote-btn yes" data-place-id="${place.id}" data-vote="yes">👍 좋아요</button>
+                <button class="vote-btn no" data-place-id="${place.id}" data-vote="no">👎 싫어요</button>
+            </div>
+        `;
+        voteItemsList.appendChild(voteItem);
+        
+        // 투표 버튼 이벤트 리스너
+        const yesBtn = voteItem.querySelector('.vote-btn.yes');
+        const noBtn = voteItem.querySelector('.vote-btn.no');
+        
+        yesBtn.addEventListener('click', () => {
+            yesBtn.classList.add('selected');
+            noBtn.classList.remove('selected');
+        });
+        
+        noBtn.addEventListener('click', () => {
+            noBtn.classList.add('selected');
+            yesBtn.classList.remove('selected');
+        });
+    });
+    
+    voteModal.classList.add('visible');
+}
+
+function submitVote() {
+    const voteItems = document.querySelectorAll('.vote-item');
+    const currentVotes = [];
+    
+    voteItems.forEach((item) => {
+        const placeId = item.querySelector('.vote-btn').dataset.placeId;
+        const placeName = item.querySelector('h5').textContent;
+        const placeAddress = item.querySelector('p').textContent;
+        const yesBtn = item.querySelector('.vote-btn.yes');
+        const noBtn = item.querySelector('.vote-btn.no');
+        
+        let vote = null;
+        if (yesBtn.classList.contains('selected')) {
+            vote = 'yes';
+        } else if (noBtn.classList.contains('selected')) {
+            vote = 'no';
+        }
+        
+        if (vote) {
+            currentVotes.push({
+                placeId,
+                placeName,
+                placeAddress,
+                vote,
+                voterName: currentVoterName
+            });
+        }
+    });
+    
+    if (currentVotes.length === 0) {
+        alert('모든 장소에 대해 투표해주세요.');
+        return;
+    }
+    
+    // 투표 결과를 전역 배열에 추가
+    voteResults.push(...currentVotes);
+    
+    // 2단계 모달 닫고 3단계 모달 열기
+    document.getElementById('vote-modal').classList.remove('visible');
+    openVoteResultModal();
+}
+
+function openVoteResultModal() {
+    const voteResultModal = document.getElementById('vote-result-modal');
+    const voteResultList = document.getElementById('vote-result-list');
+    
+    voteResultList.innerHTML = '';
+    
+    // 투표 결과를 장소별로 그룹화
+    const placeVotes = {};
+    voteResults.forEach(vote => {
+        if (!placeVotes[vote.placeId]) {
+            placeVotes[vote.placeId] = {
+                placeName: vote.placeName,
+                placeAddress: vote.placeAddress,
+                yesCount: 0,
+                noCount: 0
+            };
+        }
+        
+        if (vote.vote === 'yes') {
+            placeVotes[vote.placeId].yesCount++;
+        } else {
+            placeVotes[vote.placeId].noCount++;
+        }
+    });
+    
+    // 결과 표시
+    Object.values(placeVotes).forEach(place => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'vote-result-item';
+        resultItem.innerHTML = `
+            <div class="vote-result-item-info">
+                <h5>${place.placeName}</h5>
+                <p>${place.placeAddress}</p>
+            </div>
+            <div class="vote-count">
+                👍 ${place.yesCount} | 👎 ${place.noCount}
+            </div>
+        `;
+        voteResultList.appendChild(resultItem);
+    });
+    
+    voteResultModal.classList.add('visible');
 } 
