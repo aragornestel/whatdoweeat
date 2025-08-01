@@ -333,15 +333,6 @@ main.search-active .search-container {
     gap: 10px; /* 요소 간 간격 */
 }
 
-.creator-input-section h3 {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 15px; /* 여백 줄임 */
-    white-space: pre-line; /* 줄바꿈 허용 */
-    font-weight: normal; /* bold 제거 */
-}
-
 #creator-name,
 #voter-name {
     flex: 1; /* 남은 공간 차지 */
