@@ -322,7 +322,7 @@ main.search-active .search-container {
 
 #creator-name,
 #voter-name {
-    width: calc(100% - 40px); /* 좌우 패딩을 고려한 너비 */
+    width: calc(100% - 20px); /* ballot-candidate-item과 동일한 패딩 */
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
