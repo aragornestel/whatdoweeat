@@ -313,8 +313,10 @@ main.search-active .search-container {
     color: #666;
     font-size: 14px;
     line-height: 1.6;
+    margin-top: 0; /* 위쪽 여백 제거 */
     margin-bottom: 15px; /* 여백 줄임 */
     padding: 0 10px;
+    padding-top: 0; /* 위쪽 패딩 제거 */
     white-space: pre-line; /* 줄바꿈 허용 */
     flex-shrink: 0; /* 크기 고정 */
 }
