@@ -365,9 +365,10 @@ function openBallotCandidatesModal() {
     ballotCandidatesList.innerHTML = '';
     voteCandidates = [...ballotBox]; // ballotBox를 복사
     
-    voteCandidates.forEach((place, index) => {
+    voteCandidates.forEach((place) => {
         const candidateItem = document.createElement('div');
         candidateItem.className = 'ballot-candidate-item';
+        candidateItem.dataset.placeId = place.id; // placeId 설정
         candidateItem.innerHTML = `
             <div class="ballot-candidate-item-info">
                 <h5>${place.place_name}</h5>
@@ -377,11 +378,11 @@ function openBallotCandidatesModal() {
         `;
         ballotCandidatesList.appendChild(candidateItem);
         
-        // 제외 버튼 클릭 이벤트
+        // 제외 버튼 클릭 이벤트 (ID 기반으로 변경)
         const removeBtn = candidateItem.querySelector('.remove-candidate-btn');
         removeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            removeCandidate(index, candidateItem);
+            removeCandidateById(place.id, candidateItem);
         });
         
         // 장소 정보 클릭 이벤트
@@ -394,14 +395,14 @@ function openBallotCandidatesModal() {
     ballotCandidatesModal.classList.add('visible');
 }
 
-function removeCandidate(index, itemElement) {
-    const removedPlace = voteCandidates[index];
-    voteCandidates.splice(index, 1);
+function removeCandidateById(placeId, itemElement) {
+    // ID 기반으로 삭제
+    voteCandidates = voteCandidates.filter(candidate => candidate.id !== placeId);
     itemElement.classList.add('removed');
     itemElement.style.display = 'none';
     
     // ballotBox에서도 제거
-    const ballotIndex = ballotBox.findIndex(item => item.id === removedPlace.id);
+    const ballotIndex = ballotBox.findIndex(ballotItem => ballotItem.id === placeId);
     if (ballotIndex > -1) {
         ballotBox.splice(ballotIndex, 1);
     }
@@ -416,12 +417,12 @@ function removeCandidate(index, itemElement) {
 function updateBottomSheetButtons() {
     // 바텀시트의 모든 버튼 상태 업데이트
     const resultItems = document.querySelectorAll('.result-item');
-    resultItems.forEach(item => {
-        const addToBallotBtn = item.querySelector('.add-to-ballot-btn');
-        const placeId = item.dataset.placeId;
+    resultItems.forEach(resultItem => {
+        const addToBallotBtn = resultItem.querySelector('.add-to-ballot-btn');
+        const placeId = resultItem.dataset.placeId;
         
         if (addToBallotBtn && placeId) {
-            const isInBallotBox = ballotBox.some(item => item.id === placeId);
+            const isInBallotBox = ballotBox.some(ballotItem => ballotItem.id === placeId);
             if (isInBallotBox) {
                 addToBallotBtn.textContent = '빼기';
                 addToBallotBtn.classList.add('added');
