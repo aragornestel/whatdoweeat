@@ -346,19 +346,18 @@ main.search-active .search-container {
 }
 
 /* 투표 관련 모달 스타일 */
-.name-input-container,
-.vote-container,
-.vote-result-container {
+.ballot-candidates-container,
+.vote-poll-container {
     padding: 20px;
-    text-align: center;
 }
 
-.name-input-container h3,
-.vote-result-container h3 {
+.ballot-candidates-container h3,
+.vote-poll-container h3 {
     margin-bottom: 20px;
     color: #333;
 }
 
+#creator-name,
 #voter-name {
     width: 100%;
     padding: 12px;
@@ -368,9 +367,8 @@ main.search-active .search-container {
     margin-bottom: 20px;
 }
 
-#name-submit-btn,
-#vote-submit-btn,
-#vote-result-close {
+#share-vote-btn,
+#submit-vote-btn {
     background-color: #28a745;
     color: white;
     border: none;
@@ -381,13 +379,64 @@ main.search-active .search-container {
     font-weight: bold;
 }
 
-#name-submit-btn:hover,
-#vote-submit-btn:hover,
-#vote-result-close:hover {
+#share-vote-btn:hover,
+#submit-vote-btn:hover {
     background-color: #218838;
 }
 
-.vote-item {
+.ballot-candidate-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e9e9e9;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.ballot-candidate-item:hover {
+    background-color: #e9ecef;
+}
+
+.ballot-candidate-item.removed {
+    opacity: 0.5;
+    background-color: #f8f9fa;
+}
+
+.ballot-candidate-item-info {
+    flex-grow: 1;
+}
+
+.ballot-candidate-item-info h5 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+}
+
+.ballot-candidate-item-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.remove-candidate-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.remove-candidate-btn:hover {
+    background-color: #c82333;
+}
+
+.vote-poll-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -398,27 +447,28 @@ main.search-active .search-container {
     background-color: #f9f9f9;
 }
 
-.vote-item-info {
+.vote-poll-item-info {
     flex-grow: 1;
+    cursor: pointer;
 }
 
-.vote-item-info h5 {
+.vote-poll-item-info h5 {
     margin: 0 0 5px 0;
     font-size: 16px;
 }
 
-.vote-item-info p {
+.vote-poll-item-info p {
     margin: 0;
     font-size: 14px;
     color: #666;
 }
 
-.vote-buttons {
+.vote-poll-buttons {
     display: flex;
     gap: 10px;
 }
 
-.vote-btn {
+.vote-poll-btn {
     padding: 8px 16px;
     border: none;
     border-radius: 5px;
@@ -426,51 +476,23 @@ main.search-active .search-container {
     font-size: 14px;
 }
 
-.vote-btn.yes {
+.vote-poll-btn.yes {
     background-color: #28a745;
     color: white;
 }
 
-.vote-btn.no {
+.vote-poll-btn.no {
     background-color: #dc3545;
     color: white;
 }
 
-.vote-btn.selected {
+.vote-poll-btn.selected {
     opacity: 0.7;
 }
 
-.vote-result-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    border: 1px solid #e9e9e9;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-}
-
-.vote-result-item-info {
-    flex-grow: 1;
-}
-
-.vote-result-item-info h5 {
-    margin: 0 0 5px 0;
-    font-size: 16px;
-}
-
-.vote-result-item-info p {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
-}
-
-.vote-count {
-    background-color: #007bff;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: bold;
+.creator-input-section,
+.voter-input-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
 } 
