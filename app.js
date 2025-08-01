@@ -395,9 +395,15 @@ function openBallotCandidatesModal() {
     if (creatorInputSection) {
         const titleElement = creatorInputSection.querySelector('h3');
         if (titleElement) {
-            titleElement.textContent = '솔선수범하여 맛집을 찾고 있는 매력적인 당신의 이름을 입력해 주세요.';
+            titleElement.textContent = '솔선수범하여 맛집을 찾고 있는\n매력적인 당신의 이름을 입력해 주세요.';
         }
     }
+    
+    // 설명 텍스트 추가
+    const descriptionElement = document.createElement('div');
+    descriptionElement.className = 'ballot-candidates-description';
+    descriptionElement.textContent = '선택한 맛집을 투표로 만들어서 함께 하는 분들께 공유해 주세요.\n팝업을 닫고 다른 맛집을 더 추가할 수도 있어요.';
+    ballotCandidatesList.parentNode.insertBefore(descriptionElement, ballotCandidatesList);
     
     ballotCandidatesModal.classList.add('visible');
 }
