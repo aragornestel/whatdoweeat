@@ -395,7 +395,7 @@ function openBallotCandidatesModal() {
     if (creatorInputSection) {
         const titleElement = creatorInputSection.querySelector('h3');
         if (titleElement) {
-            titleElement.textContent = '솔선수범하여 맛집을 찾고 있는\n매력적인 당신의 이름을 입력해 주세요.';
+            titleElement.textContent = '솔선수범하여 맛집을 찾고 있는\n훌륭한 당신의 이름을 입력해 주세요.';
         }
     }
     
