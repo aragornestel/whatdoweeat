@@ -306,14 +306,14 @@ main.search-active .search-container {
 .ballot-candidates-list-container {
     flex-grow: 1;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* 여백 줄임 */
 }
 
 .ballot-candidates-description {
     color: #666;
     font-size: 14px;
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* 여백 줄임 */
     padding: 0 10px;
     white-space: pre-line; /* 줄바꿈 허용 */
     flex-shrink: 0; /* 크기 고정 */
@@ -326,7 +326,7 @@ main.search-active .search-container {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* 여백 줄임 */
     box-sizing: border-box; /* 패딩과 보더를 포함한 너비 계산 */
 }
 
@@ -475,9 +475,19 @@ main.search-active .search-container {
 
 .creator-input-section {
     margin-top: 0;
-    padding-top: 20px;
+    padding-top: 15px; /* 여백 줄임 */
     border-top: 1px solid #eee;
     flex-shrink: 0; /* 크기 고정 */
+    background-color: #fff; /* 배경색 추가로 확실히 보이게 */
+}
+
+.creator-input-section h3 {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px; /* 여백 줄임 */
+    white-space: pre-line; /* 줄바꿈 허용 */
+    font-weight: normal; /* bold 제거 */
 }
 
 /* 토스 스타일 모달 개선 */
