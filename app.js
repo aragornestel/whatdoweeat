@@ -191,6 +191,7 @@ function displayPlaces(places) {
 
         const listItem = document.createElement('div');
         listItem.className = 'result-item';
+        listItem.dataset.placeId = place.id; // placeId 설정
         listItem.innerHTML = `
             <div class="result-item-info">
                 <h5>${place.place_name}</h5>
@@ -394,9 +395,42 @@ function openBallotCandidatesModal() {
 }
 
 function removeCandidate(index, itemElement) {
+    const removedPlace = voteCandidates[index];
     voteCandidates.splice(index, 1);
     itemElement.classList.add('removed');
     itemElement.style.display = 'none';
+    
+    // ballotBox에서도 제거
+    const ballotIndex = ballotBox.findIndex(item => item.id === removedPlace.id);
+    if (ballotIndex > -1) {
+        ballotBox.splice(ballotIndex, 1);
+    }
+    
+    // 바텀시트의 버튼 상태 업데이트
+    updateBottomSheetButtons();
+    
+    // GNB 버튼 업데이트
+    updateBallotBoxButton();
+}
+
+function updateBottomSheetButtons() {
+    // 바텀시트의 모든 버튼 상태 업데이트
+    const resultItems = document.querySelectorAll('.result-item');
+    resultItems.forEach(item => {
+        const addToBallotBtn = item.querySelector('.add-to-ballot-btn');
+        const placeId = item.dataset.placeId;
+        
+        if (addToBallotBtn && placeId) {
+            const isInBallotBox = ballotBox.some(item => item.id === placeId);
+            if (isInBallotBox) {
+                addToBallotBtn.textContent = '빼기';
+                addToBallotBtn.classList.add('added');
+            } else {
+                addToBallotBtn.textContent = '담기';
+                addToBallotBtn.classList.remove('added');
+            }
+        }
+    });
 }
 
 function showPlaceInfo(place) {
