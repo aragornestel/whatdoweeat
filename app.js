@@ -55,7 +55,9 @@ function initializeMap(centerPosition) {
     // infowindow 초기화
     infowindow = new kakao.maps.InfoWindow({
         disableAutoPan: true,
-        zIndex: 1
+        zIndex: 1000, // 더 높은 zIndex 설정
+        removable: false, // 자동으로 제거되지 않도록
+        closeButton: false // 닫기 버튼 제거
     });
 
     // 검색 버튼 이벤트 리스너 설정
@@ -227,26 +229,27 @@ function displayPlaces(places) {
         
         const showInfoWindow = () => {
             // hover 시에는 항상 인포윈도우 표시
-            // 기존 인포윈도우를 먼저 닫기
-            if (infowindow.getMap()) {
-                infowindow.close();
-            }
-            infowindow.setContent(`
-                <div style="
-                    padding: 8px 12px;
-                    font-size: 14px;
-                    font-weight: 500;
-                    color: #333;
-                    background: white;
-                    border: 2px solid #28a745;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                    white-space: nowrap;
-                    max-width: 300px;
-                    word-wrap: break-word;
-                ">${place.place_name}</div>
-            `);
-            infowindow.open(map, marker);
+            // 기존 인포윈도우를 더 확실하게 닫기
+            infowindow.close();
+            // 약간의 지연 후 새로운 인포윈도우 표시
+            setTimeout(() => {
+                infowindow.setContent(`
+                    <div style="
+                        padding: 8px 12px;
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #333;
+                        background: white;
+                        border: 2px solid #28a745;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                        white-space: nowrap;
+                        max-width: 300px;
+                        word-wrap: break-word;
+                    ">${place.place_name}</div>
+                `);
+                infowindow.open(map, marker);
+            }, 10);
         };
         
         const hideInfoWindow = () => {
@@ -303,27 +306,28 @@ function showMarkerInfo(placeId) {
     console.log('showMarkerInfo 호출됨:', placeId, markerInfo ? '정보있음' : '정보없음');
     if (markerInfo && infowindow) {
         console.log('인포윈도우 표시 시도:', markerInfo.placeName);
-        // 기존 인포윈도우를 먼저 닫기
-        if (infowindow.getMap()) {
-            infowindow.close();
-        }
-        infowindow.setContent(`
-            <div style="
-                padding: 8px 12px;
-                font-size: 14px;
-                font-weight: 500;
-                color: #333;
-                background: white;
-                border: 2px solid #28a745;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                white-space: nowrap;
-                max-width: 300px;
-                word-wrap: break-word;
-            ">${markerInfo.placeName}</div>
-        `);
-        infowindow.open(map, markerInfo.marker);
-        console.log('인포윈도우 표시 완료');
+        // 기존 인포윈도우를 더 확실하게 닫기
+        infowindow.close();
+        // 약간의 지연 후 새로운 인포윈도우 표시
+        setTimeout(() => {
+            infowindow.setContent(`
+                <div style="
+                    padding: 8px 12px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+                    background: white;
+                    border: 2px solid #28a745;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                    white-space: nowrap;
+                    max-width: 300px;
+                    word-wrap: break-word;
+                ">${markerInfo.placeName}</div>
+            `);
+            infowindow.open(map, markerInfo.marker);
+            console.log('인포윈도우 표시 완료');
+        }, 10);
     } else {
         console.log('인포윈도우 표시 실패:', !markerInfo ? '마커정보없음' : 'infowindow없음');
     }
