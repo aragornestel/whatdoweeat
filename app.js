@@ -324,10 +324,22 @@ function showMarkerInfo(placeId) {
         
         // 인포윈도우 생성 후 DOM 요소 확인
         setTimeout(() => {
-            const infoWindows = document.querySelectorAll('[class*="info"], [class*="Info"]');
-            console.log('페이지의 인포윈도우 요소들:', infoWindows.length, '개');
-            infoWindows.forEach((el, index) => {
-                console.log(`인포윈도우 ${index + 1}:`, el.className, el.style.cssText);
+            // 카카오맵 인포윈도우만 정확히 찾기
+            const kakaoInfoWindows = document.querySelectorAll('div[class*="kakao"], div[class*="Kakao"], div[class*="map"], div[class*="Map"]');
+            console.log('카카오맵 관련 요소들:', kakaoInfoWindows.length, '개');
+            kakaoInfoWindows.forEach((el, index) => {
+                console.log(`카카오맵 요소 ${index + 1}:`, el.className, el.style.cssText);
+            });
+            
+            // 모든 div 요소 중에서 인포윈도우처럼 보이는 것들 찾기
+            const allDivs = document.querySelectorAll('div');
+            const infoWindowLike = Array.from(allDivs).filter(div => 
+                div.style.position === 'absolute' && 
+                (div.style.zIndex > 0 || div.className.includes('info') || div.className.includes('Info'))
+            );
+            console.log('인포윈도우처럼 보이는 요소들:', infoWindowLike.length, '개');
+            infoWindowLike.forEach((el, index) => {
+                console.log(`인포윈도우같은 요소 ${index + 1}:`, el.className, el.style.cssText);
             });
         }, 100);
         
