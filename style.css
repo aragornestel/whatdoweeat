@@ -619,6 +619,9 @@ div[style*="background: rgb(255, 255, 255)"][style*="border: 1px solid rgb(118, 
     white-space: nowrap !important;
     max-width: 300px !important;
     word-wrap: break-word !important;
+    text-align: center !important;
+    width: auto !important;
+    height: auto !important;
 }
 
 /* 카카오맵 인포윈도우 내용 스타일링 */
@@ -626,4 +629,17 @@ div[style*="color: rgb(0, 0, 0)"][style*="position: absolute"][style*="z-index: 
     color: #333 !important;
     font-size: 14px !important;
     font-weight: 500 !important;
+    text-align: center !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* 카카오맵 인포윈도우 화살표/꼬리 숨기기 */
+div[style*="position: absolute"][style*="z-index: 1"][style*="margin: 0px 6px"] {
+    display: none !important;
+}
+
+/* 카카오맵 인포윈도우 화살표 관련 요소들 숨기기 */
+div[style*="position: absolute"][style*="z-index: 1"][style*="height: 19px"] {
+    display: none !important;
 } 
