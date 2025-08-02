@@ -229,21 +229,8 @@ function displayPlaces(places) {
         
         const showInfoWindow = () => {
             // hover 시에는 항상 인포윈도우 표시
-            infowindow.setContent(`
-                <div style="
-                    padding: 8px 12px;
-                    font-size: 14px;
-                    font-weight: 500;
-                    color: #333;
-                    background: white;
-                    border: 2px solid #28a745;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                    white-space: nowrap;
-                    max-width: 300px;
-                    word-wrap: break-word;
-                ">${place.place_name}</div>
-            `);
+            // 간단한 텍스트만 전달 (CSS로 스타일링)
+            infowindow.setContent(place.place_name);
             infowindow.open(map, marker);
         };
         
@@ -305,21 +292,8 @@ function showMarkerInfo(placeId) {
         // 현재 열린 인포윈도우 확인
         console.log('현재 인포윈도우 상태:', infowindow.getMap() ? '열림' : '닫힘');
         
-        infowindow.setContent(`
-            <div style="
-                padding: 8px 12px;
-                font-size: 14px;
-                font-weight: 500;
-                color: #333;
-                background: white;
-                border: 2px solid #28a745;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                white-space: nowrap;
-                max-width: 300px;
-                word-wrap: break-word;
-            ">${markerInfo.placeName}</div>
-        `);
+        // 간단한 텍스트만 전달 (CSS로 스타일링)
+        infowindow.setContent(markerInfo.placeName);
         infowindow.open(map, markerInfo.marker);
         
         // 인포윈도우 생성 후 DOM 요소 확인

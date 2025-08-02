@@ -608,12 +608,22 @@ div[class*="InfoWindowClose"] {
 
 /* 실제 카카오맵 인포윈도우 스타일 오버라이드 */
 div[style*="background: rgb(255, 255, 255)"][style*="border: 1px solid rgb(118, 129, 168)"][style*="z-index: 1000"] {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+    background: white !important;
+    border: 2px solid #28a745 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+    white-space: nowrap !important;
+    max-width: 300px !important;
+    word-wrap: break-word !important;
 }
 
-/* 카카오맵 인포윈도우 내용 숨기기 */
+/* 카카오맵 인포윈도우 내용 스타일링 */
 div[style*="color: rgb(0, 0, 0)"][style*="position: absolute"][style*="z-index: 1"] {
-    display: none !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
 } 
