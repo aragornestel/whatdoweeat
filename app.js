@@ -3,7 +3,7 @@ let map;
 let markers = [];
 let currentPlaces = []; // 현재 검색 결과를 저장할 배열
 let ballotBox = []; // 투표함에 담긴 장소를 저장할 배열
-let infowindow = new kakao.maps.InfoWindow();
+let infowindow; // 정보창을 저장할 변수
 let currentVoteId = null; // 현재 투표 ID
 let voteCandidates = []; // 투표 후보 목록
 let voteResults = {}; // 투표 결과를 저장할 객체
@@ -51,6 +51,12 @@ function initializeMap(centerPosition) {
         level: 3 // 카카오맵의 확대 레벨
     };
     map = new kakao.maps.Map(mapContainer, mapOptions);
+    
+    // infowindow 초기화
+    infowindow = new kakao.maps.InfoWindow({
+        disableAutoPan: true,
+        zIndex: 1
+    });
 
     // 검색 버튼 이벤트 리스너 설정
     document.getElementById('search-btn').addEventListener('click', searchPlaces);
@@ -163,7 +169,7 @@ function displayPlaces(places) {
     resultList.innerHTML = '';
     removeMarkers();
     
-    if (infowindow.getMap()) {
+    if (infowindow) {
         infowindow.close();
     }
 
@@ -279,7 +285,7 @@ function showMarkerInfo(placeId) {
 // 마커 정보 숨김 함수
 function hideMarkerInfo(placeId) {
     const markerInfo = markerInfoMap.get(placeId);
-    if (markerInfo && infowindow.getMap() && infowindow.getPosition().equals(markerInfo.marker.getPosition())) {
+    if (markerInfo && infowindow && infowindow.getMap() && infowindow.getPosition().equals(markerInfo.marker.getPosition())) {
         infowindow.close();
     }
 }
