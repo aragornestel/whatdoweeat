@@ -188,6 +188,9 @@ function displayPlaces(places) {
             map: map,
             title: place.place_name
         });
+        
+        // 마커에 place.id 저장
+        marker.placeId = place.id;
 
         markers.push(marker);
 
@@ -315,11 +318,10 @@ function toggleBallotBoxItem(place, button) {
         button.textContent = '빼기';
         button.classList.add('added');
         // 투표함에 추가되면 인포윈도우 표시
-        const marker = markers.find(m => {
-            const position = m.getPosition();
-            return position.equals(new kakao.maps.LatLng(place.y, place.x));
-        });
+        const marker = markers.find(m => m.placeId === place.id);
         console.log('마커 찾기 결과:', marker ? '찾음' : '못찾음', place.place_name);
+        console.log('찾으려는 placeId:', place.id);
+        console.log('현재 마커들:', markers.length, '개');
         if (marker) {
             markerInfoMap.set(place.id, { marker, placeName: place.place_name });
             console.log('마커 정보 저장됨:', place.id, place.place_name);
