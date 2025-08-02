@@ -229,7 +229,7 @@ function displayPlaces(places) {
         
         const showInfoWindow = () => {
             // hover 시에는 항상 인포윈도우 표시
-            // 간단한 텍스트만 전달 (CSS로 스타일링)
+            // 기본 인포윈도우 사용
             infowindow.setContent(place.place_name);
             infowindow.open(map, marker);
         };
@@ -292,30 +292,9 @@ function showMarkerInfo(placeId) {
         // 현재 열린 인포윈도우 확인
         console.log('현재 인포윈도우 상태:', infowindow.getMap() ? '열림' : '닫힘');
         
-        // 간단한 텍스트만 전달 (CSS로 스타일링)
+        // 기본 인포윈도우 사용
         infowindow.setContent(markerInfo.placeName);
         infowindow.open(map, markerInfo.marker);
-        
-        // 인포윈도우 생성 후 DOM 요소 확인
-        setTimeout(() => {
-            // 카카오맵 인포윈도우만 정확히 찾기
-            const kakaoInfoWindows = document.querySelectorAll('div[class*="kakao"], div[class*="Kakao"], div[class*="map"], div[class*="Map"]');
-            console.log('카카오맵 관련 요소들:', kakaoInfoWindows.length, '개');
-            kakaoInfoWindows.forEach((el, index) => {
-                console.log(`카카오맵 요소 ${index + 1}:`, el.className, el.style.cssText);
-            });
-            
-            // 모든 div 요소 중에서 인포윈도우처럼 보이는 것들 찾기
-            const allDivs = document.querySelectorAll('div');
-            const infoWindowLike = Array.from(allDivs).filter(div => 
-                div.style.position === 'absolute' && 
-                (div.style.zIndex > 0 || div.className.includes('info') || div.className.includes('Info'))
-            );
-            console.log('인포윈도우처럼 보이는 요소들:', infoWindowLike.length, '개');
-            infoWindowLike.forEach((el, index) => {
-                console.log(`인포윈도우같은 요소 ${index + 1}:`, el.className, el.style.cssText);
-            });
-        }, 100);
         
         console.log('인포윈도우 표시 완료');
     } else {
