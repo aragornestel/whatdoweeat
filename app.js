@@ -3,10 +3,11 @@ let map;
 let markers = [];
 let currentPlaces = []; // 현재 검색 결과를 저장할 배열
 let ballotBox = []; // 투표함에 담긴 장소를 저장할 배열
-let infowindow; // 정보창을 저장할 변수
+let infowindow = new kakao.maps.InfoWindow();
 let currentVoteId = null; // 현재 투표 ID
 let voteCandidates = []; // 투표 후보 목록
 let voteResults = {}; // 투표 결과를 저장할 객체
+let markerInfoMap = new Map(); // 마커와 인포윈도우 정보를 연결하는 맵
 
 document.addEventListener('DOMContentLoaded', function () {
     const KAKAO_JS_KEY = '083df200276ca2cba88ee3db6ebbc2c1';
@@ -50,11 +51,6 @@ function initializeMap(centerPosition) {
         level: 3 // 카카오맵의 확대 레벨
     };
     map = new kakao.maps.Map(mapContainer, mapOptions);
-
-    infowindow = new kakao.maps.InfoWindow({
-        disableAutoPan: true,
-        zIndex: 1
-    });
 
     // 검색 버튼 이벤트 리스너 설정
     document.getElementById('search-btn').addEventListener('click', searchPlaces);
@@ -208,6 +204,9 @@ function displayPlaces(places) {
         if (ballotBox.some(item => item.id === place.id)) {
             addToBallotBtn.textContent = '빼기';
             addToBallotBtn.classList.add('added');
+            // 투표함에 있는 장소라면 인포윈도우 표시
+            markerInfoMap.set(place.id, { marker, placeName: place.place_name });
+            showMarkerInfo(place.id);
         }
 
         // 투표함 버튼 클릭 이벤트
@@ -256,6 +255,33 @@ function displayPlaces(places) {
 function removeMarkers() {
     markers.forEach(marker => marker.setMap(null));
     markers = [];
+    markerInfoMap.clear(); // 마커 정보 맵도 초기화
+}
+
+// 마커 정보 제거 함수
+function removeMarkerInfo(placeId) {
+    const markerInfo = markerInfoMap.get(placeId);
+    if (markerInfo) {
+        hideMarkerInfo(placeId);
+        markerInfoMap.delete(placeId);
+    }
+}
+
+// 마커 정보 표시 함수
+function showMarkerInfo(placeId) {
+    const markerInfo = markerInfoMap.get(placeId);
+    if (markerInfo) {
+        infowindow.setContent(`<div style="padding:5px;font-size:12px;">${markerInfo.placeName}</div>`);
+        infowindow.open(map, markerInfo.marker);
+    }
+}
+
+// 마커 정보 숨김 함수
+function hideMarkerInfo(placeId) {
+    const markerInfo = markerInfoMap.get(placeId);
+    if (markerInfo && infowindow.getMap() && infowindow.getPosition().equals(markerInfo.marker.getPosition())) {
+        infowindow.close();
+    }
 }
 
 function toggleBallotBoxItem(place, button) {
@@ -264,10 +290,20 @@ function toggleBallotBoxItem(place, button) {
         ballotBox.splice(index, 1);
         button.textContent = '담기';
         button.classList.remove('added');
+        removeMarkerInfo(place.id); // 투표함에서 제거되면 인포윈도우도 제거
     } else {
         ballotBox.push(place);
         button.textContent = '빼기';
         button.classList.add('added');
+        // 투표함에 추가되면 인포윈도우 표시
+        const marker = markers.find(m => {
+            const position = m.getPosition();
+            return position.equals(new kakao.maps.LatLng(place.y, place.x));
+        });
+        if (marker) {
+            markerInfoMap.set(place.id, { marker, placeName: place.place_name });
+            showMarkerInfo(place.id);
+        }
     }
     updateBallotBoxButton();
 }
@@ -412,6 +448,9 @@ function removeCandidateById(placeId, itemElement) {
     
     // GNB 버튼 업데이트
     updateBallotBoxButton();
+    
+    // 마커 정보 제거
+    removeMarkerInfo(placeId);
 }
 
 function updateBottomSheetButtons() {
