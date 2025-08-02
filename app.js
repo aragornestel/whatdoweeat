@@ -227,7 +227,21 @@ function displayPlaces(places) {
         
         const showInfoWindow = () => {
             // hover 시에는 항상 인포윈도우 표시
-            infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
+            infowindow.setContent(`
+                <div style="
+                    padding: 8px 12px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+                    background: white;
+                    border: 2px solid #28a745;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                    white-space: nowrap;
+                    max-width: 300px;
+                    word-wrap: break-word;
+                ">${place.place_name}</div>
+            `);
             infowindow.open(map, marker);
         };
         
@@ -285,7 +299,21 @@ function showMarkerInfo(placeId) {
     console.log('showMarkerInfo 호출됨:', placeId, markerInfo ? '정보있음' : '정보없음');
     if (markerInfo && infowindow) {
         console.log('인포윈도우 표시 시도:', markerInfo.placeName);
-        infowindow.setContent(`<div style="padding:5px;font-size:12px;">${markerInfo.placeName}</div>`);
+        infowindow.setContent(`
+            <div style="
+                padding: 8px 12px;
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+                background: white;
+                border: 2px solid #28a745;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                white-space: nowrap;
+                max-width: 300px;
+                word-wrap: break-word;
+            ">${markerInfo.placeName}</div>
+        `);
         infowindow.open(map, markerInfo.marker);
         console.log('인포윈도우 표시 완료');
     } else {
