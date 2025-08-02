@@ -570,3 +570,38 @@ main.search-active .search-container {
     height: 100%;
     flex-grow: 1;
 } 
+
+/* 카카오맵 기본 인포윈도우 스타일 오버라이드 */
+.kakao-maps .kakao-maps-info-window,
+.kakao-maps-info-window,
+div[class*="info-window"],
+div[class*="InfoWindow"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.kakao-maps .kakao-maps-info-window .kakao-maps-info-window-content,
+.kakao-maps-info-window-content,
+div[class*="info-window-content"],
+div[class*="InfoWindowContent"] {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* 카카오맵 기본 인포윈도우 화살표 숨기기 */
+.kakao-maps .kakao-maps-info-window .kakao-maps-info-window-arrow,
+.kakao-maps-info-window-arrow,
+div[class*="info-window-arrow"],
+div[class*="InfoWindowArrow"] {
+    display: none !important;
+}
+
+/* 카카오맵 기본 인포윈도우 닫기 버튼 숨기기 */
+.kakao-maps .kakao-maps-info-window .kakao-maps-info-window-close,
+.kakao-maps-info-window-close,
+div[class*="info-window-close"],
+div[class*="InfoWindowClose"] {
+    display: none !important;
+} 
