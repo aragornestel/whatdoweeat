@@ -227,6 +227,10 @@ function displayPlaces(places) {
         
         const showInfoWindow = () => {
             // hover 시에는 항상 인포윈도우 표시
+            // 기존 인포윈도우를 먼저 닫기
+            if (infowindow.getMap()) {
+                infowindow.close();
+            }
             infowindow.setContent(`
                 <div style="
                     padding: 8px 12px;
@@ -299,6 +303,10 @@ function showMarkerInfo(placeId) {
     console.log('showMarkerInfo 호출됨:', placeId, markerInfo ? '정보있음' : '정보없음');
     if (markerInfo && infowindow) {
         console.log('인포윈도우 표시 시도:', markerInfo.placeName);
+        // 기존 인포윈도우를 먼저 닫기
+        if (infowindow.getMap()) {
+            infowindow.close();
+        }
         infowindow.setContent(`
             <div style="
                 padding: 8px 12px;
