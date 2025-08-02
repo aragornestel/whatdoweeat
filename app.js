@@ -301,6 +301,10 @@ function showMarkerInfo(placeId) {
     console.log('showMarkerInfo 호출됨:', placeId, markerInfo ? '정보있음' : '정보없음');
     if (markerInfo && infowindow) {
         console.log('인포윈도우 표시 시도:', markerInfo.placeName);
+        
+        // 현재 열린 인포윈도우 확인
+        console.log('현재 인포윈도우 상태:', infowindow.getMap() ? '열림' : '닫힘');
+        
         infowindow.setContent(`
             <div style="
                 padding: 8px 12px;
@@ -317,6 +321,16 @@ function showMarkerInfo(placeId) {
             ">${markerInfo.placeName}</div>
         `);
         infowindow.open(map, markerInfo.marker);
+        
+        // 인포윈도우 생성 후 DOM 요소 확인
+        setTimeout(() => {
+            const infoWindows = document.querySelectorAll('[class*="info"], [class*="Info"]');
+            console.log('페이지의 인포윈도우 요소들:', infoWindows.length, '개');
+            infoWindows.forEach((el, index) => {
+                console.log(`인포윈도우 ${index + 1}:`, el.className, el.style.cssText);
+            });
+        }, 100);
+        
         console.log('인포윈도우 표시 완료');
     } else {
         console.log('인포윈도우 표시 실패:', !markerInfo ? '마커정보없음' : 'infowindow없음');
