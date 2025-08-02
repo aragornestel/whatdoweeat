@@ -226,18 +226,14 @@ function displayPlaces(places) {
         });
         
         const showInfoWindow = () => {
-            // 투표함에 담긴 장소는 hover 시 인포윈도우를 표시하지 않음
-            if (!ballotBox.some(item => item.id === place.id)) {
-                infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
-                infowindow.open(map, marker);
-            }
+            // hover 시에는 항상 인포윈도우 표시
+            infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
+            infowindow.open(map, marker);
         };
         
         const hideInfoWindow = () => {
-            // 투표함에 담긴 장소는 hover 시 인포윈도우를 숨기지 않음
-            if (!ballotBox.some(item => item.id === place.id)) {
-                infowindow.close();
-            }
+            // hover 시에는 항상 인포윈도우 숨김
+            infowindow.close();
         };
 
         kakao.maps.event.addListener(marker, 'mouseover', showInfoWindow);
