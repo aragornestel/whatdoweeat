@@ -222,12 +222,18 @@ function displayPlaces(places) {
         });
         
         const showInfoWindow = () => {
-            infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
-            infowindow.open(map, marker);
+            // 투표함에 담긴 장소는 hover 시 인포윈도우를 표시하지 않음
+            if (!ballotBox.some(item => item.id === place.id)) {
+                infowindow.setContent(`<div style="padding:5px;font-size:12px;">${place.place_name}</div>`);
+                infowindow.open(map, marker);
+            }
         };
         
         const hideInfoWindow = () => {
-            infowindow.close();
+            // 투표함에 담긴 장소는 hover 시 인포윈도우를 숨기지 않음
+            if (!ballotBox.some(item => item.id === place.id)) {
+                infowindow.close();
+            }
         };
 
         kakao.maps.event.addListener(marker, 'mouseover', showInfoWindow);
@@ -261,7 +267,7 @@ function displayPlaces(places) {
 function removeMarkers() {
     markers.forEach(marker => marker.setMap(null));
     markers = [];
-    markerInfoMap.clear(); // 마커 정보 맵도 초기화
+    // markerInfoMap.clear(); // 투표함에 담긴 장소 정보는 유지
 }
 
 // 마커 정보 제거 함수
@@ -276,7 +282,7 @@ function removeMarkerInfo(placeId) {
 // 마커 정보 표시 함수
 function showMarkerInfo(placeId) {
     const markerInfo = markerInfoMap.get(placeId);
-    if (markerInfo) {
+    if (markerInfo && infowindow) {
         infowindow.setContent(`<div style="padding:5px;font-size:12px;">${markerInfo.placeName}</div>`);
         infowindow.open(map, markerInfo.marker);
     }
@@ -632,4 +638,4 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 투표 링크 확인
     setTimeout(checkVoteLink, 1000); // 지도 로딩 후 확인
-}); 
+});
